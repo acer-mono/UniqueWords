@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace UniqueWords
 {
@@ -10,15 +11,12 @@ namespace UniqueWords
 
         public void Parse(string input)
         {
-            char[] delimiterChars = { '?', '!', '[', ']', ' ', ',', '.', ':', '“', '(', ')', '«', '»', ';', '…', '<', '>', '{', '}', '”' };
-            var words = input.ToLower().Split(delimiterChars, StringSplitOptions.RemoveEmptyEntries);
+            var regex = new Regex(@"(\w+)(-|')?(\w*)", RegexOptions.IgnoreCase);
+            var words = regex.Matches(input);
             
-            foreach (var str in words)
+            foreach (var matches in words)
             {
-                if (str == "–")
-                {
-                    continue;
-                }
+                var str = matches.ToString()?.ToUpper();
                 
                 AddWord(str);
             }
@@ -41,7 +39,8 @@ namespace UniqueWords
         {
             _words.Sort();
             _words.Reverse();
-            return _words.Aggregate(string.Empty, (current, word) => current + (word + Environment.NewLine));
+            return _words.Aggregate(string.Empty, (current, word) => 
+                current + (word + Environment.NewLine));
         }
     }
 }
